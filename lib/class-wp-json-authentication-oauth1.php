@@ -552,6 +552,11 @@ class WP_JSON_Authentication_OAuth1 extends WP_JSON_Authentication {
 		$params = array_merge( $params, $oauth_params );
 
 		$base_request_uri = rawurlencode( get_home_url( null, parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ) ) );
+		
+		//This strips the subdomain from the $base_request_uri forcing authentication via the main domain of a multisite installation.
+		$array = explode(".", $base_request_uri);
+
+    		return (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : "").".".$array[count($array) - 1];
 
 		// get the signature provided by the consumer and remove it from the parameters prior to checking the signature
 		$consumer_signature = rawurldecode( $params['oauth_signature'] );
